@@ -116,5 +116,6 @@ if __name__ == "__main__":
 TODO: 
 1. implement scop for validators
 2. row wise validators mayb or ig scope could cover that idk
+3. Rule book - load_from_rule_book() - probably implement this after architecture is complete
 """
 
