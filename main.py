@@ -6,6 +6,26 @@ def enforce_type(value,value_name,type):
         raise TypeError(f"Value must be of value_name {type}, got {type(value)}")
 
 
+class RuleForger:
+    def __init__(self,df):
+        self.df = df
+        self.column_policies = []
+
+    def add_column_policy(self,policy):
+        self.column_policies.append(policy)
+
+    def validate(self):
+        for policy in self.column_policies:
+            self.validate_column_policy(policy)
+
+    def validate_column_policy(self,policy):
+        for i in df[policy.name]:
+            #Validate Type
+            if type(i) != policy.type:
+                print(f"Type {type(i)}, Required: {policy.type}")
+                print(f"Mismatch found: {i}")
+
+
 class ColumnPolicy:
     def __init__(self):
         pass
@@ -20,23 +40,12 @@ class ColumnPolicy:
         self.type = type_
         return self
 
-class RuleForger:
-    def __init__(self,df):
-        self.df = df
-        self.column_policies = []
-    def add_column_policy(self,policy):
-        self.column_policies.append(policy)
 
-    def validate(self):
-        for policy in self.column_policies:
-            self.validate_column_policy(policy)
-    def validate_column_policy(self,policy):
-        for i in df[policy.name]:
-            #Validate Type
-            if type(i) != policy.type:
-                print(f"Type {type(i)}, Required: {policy.type}")
-                print(f"Mismatch found: {i}")
-
+#Validators 
+class TypeValidator:
+    def __init__(name,type_):
+        self.name = name
+        self.type = type_
 
 
 
@@ -45,15 +54,8 @@ if __name__ == "__main__":
     print(df.head())
     rf = RuleForger(df)
     policy = ColumnPolicy()\
-            .name("HomePlanet")\
-            .type(str)
+            .name("HomePlanet")
+
     rf.add_column_policy(policy)
     rf.validate()
-
-
-    # policy = [{
-    #               "column":"HomePlanet",
-    #           },]
-
-
 
