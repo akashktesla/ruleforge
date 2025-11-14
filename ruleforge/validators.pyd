@@ -1,0 +1,7 @@
+cdef class Validator:
+    cpdef bint validate(self, object element) 
+
+
+cdef class TypeValidator(Validator):
+    cdef object expected_type
+    cpdef bint validate(self, object element)
