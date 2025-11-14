@@ -1,0 +1,11 @@
+{
+    "column":{
+        "HomePlanet":[
+            { "validator":"Type", "type":"str" }
+        ],
+        "Cabin":[
+            {"validator":"Type","type":"str"},
+            {"validator":"Regex","pattern":"^[A-Z]/\\d+/[A-Z]$"}
+        ]
+    }
+}
