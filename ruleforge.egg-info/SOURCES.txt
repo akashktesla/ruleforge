@@ -3,9 +3,11 @@ README.md
 pyproject.toml
 setup.py
 ruleforge/__init__.py
-ruleforge/builder.py
+ruleforge/builder.c
+ruleforge/builder.pyx
 ruleforge/core.py
-ruleforge/loader.py
+ruleforge/loader.c
+ruleforge/loader.pyx
 ruleforge/validators.c
 ruleforge/validators.pyx
 ruleforge.egg-info/PKG-INFO

@@ -9,22 +9,19 @@ from .validators import (
 )
 import builtins
 import pandas as pd
+from .loader import load_config
 
-
-class RuleForger:
-    def __init__(self, df):
+cdef class RuleForger:
+    cdef object df
+    cdef dict[str,List] column_validators
+    cdef List row_validators
+    def __cinit__(self,object df):
         self.df = df
         self.column_validators: Dict[str, List] = {}
         self.row_validators: List = []
+        #change the shit to path instead of df after it's cythonized
 
-    def with_csv(path:str):
-        self.df = pd.read_csv(path)
-        self.column_validators: Dict[str, List] = {}
-        self.row_validators: List = []
-
-    def load_from_config(self, config_path: str):
-        from .loader import load_config
-
+    cdef load_from_config(self, config_path: str):
         data = load_config(config_path)
         for colname, rules in data.get("column", {}).items():
             builder = ColumnPolicyBuilder(colname)
@@ -52,22 +49,22 @@ class RuleForger:
                     builder.add_validator(CustomFunctionValidator(func))
             self.add_policy(builder)
 
-    def add_policy(self, policy):
+    cdef add_policy(self, policy):
         if policy.scope == "column":
             self.column_validators.setdefault(policy.name, []).extend(policy.validators)
         else:
             self.row_validators.extend(policy.validators)
 
-    def validate(self):
+    cdef validate(self):
         self.validate_row_policy()
         self.validate_column_policy()
 
-    def validate_row_policy(self):
+    cdef validate_row_policy(self):
         for row in self.df.itertuples():
             for validator in self.row_validators:
                 validator.validate(row)
 
-    def validate_column_policy(self):
+    cdef validate_column_policy(self):
         for column_name, validators in self.column_validators.items():
             for element in self.df[column_name]:
                 for validator in validators:
