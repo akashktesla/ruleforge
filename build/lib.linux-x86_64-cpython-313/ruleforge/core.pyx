@@ -9,22 +9,26 @@ from .validators import (
 )
 import builtins
 import pandas as pd
+from .loader import load_config
 
-
-class RuleForger:
-    def __init__(self, df):
+cdef class RuleForger:
+    def __cinit__(self,object df):
         self.df = df
-        self.column_validators: Dict[str, List] = {}
-        self.row_validators: List = []
+        self.column_validators = {}
+        self.row_validators= []
+        #change the shit to path instead of df after it's cythonized
 
-    def with_csv(path:str):
-        self.df = pd.read_csv(path)
-        self.column_validators: Dict[str, List] = {}
-        self.row_validators: List = []
 
-    def load_from_config(self, config_path: str):
-        from .loader import load_config
-
+    cpdef void load_from_config(self, str config_path):
+        cdef dict data 
+        cdef str colname
+        cdef list rules
+        cdef object builder
+        cdef object t
+        cdef dict rule
+        cdef str func_name
+        cdef str vtype
+        cdef object func
         data = load_config(config_path)
         for colname, rules in data.get("column", {}).items():
             builder = ColumnPolicyBuilder(colname)
@@ -35,13 +39,13 @@ class RuleForger:
                     builder.add_validator(TypeValidator(t))
                 elif vtype == "regex":
                     builder.add_validator(
-                        RegexValidator(
-                            rule.get("pattern", ""),
-                            rule.get("full_match", True),
-                            rule.get("negate", False),
-                            rule.get("flags", 0),
-                        )
-                    )
+                            RegexValidator(
+                                rule.get("pattern", ""),
+                                rule.get("full_match", True),
+                                rule.get("negate", False),
+                                rule.get("flags", 0),
+                                )
+                            )
                 elif vtype == "nullable":
                     builder.add_validator(NullValidator(rule.get("nullable", False)))
                 elif vtype == "constraint":
@@ -52,22 +56,28 @@ class RuleForger:
                     builder.add_validator(CustomFunctionValidator(func))
             self.add_policy(builder)
 
-    def add_policy(self, policy):
+    cpdef void add_policy(self, object policy):
         if policy.scope == "column":
             self.column_validators.setdefault(policy.name, []).extend(policy.validators)
         else:
             self.row_validators.extend(policy.validators)
 
-    def validate(self):
+    cpdef void validate(self):
         self.validate_row_policy()
         self.validate_column_policy()
 
-    def validate_row_policy(self):
+    cpdef void validate_row_policy(self):
+        cdef object row
+        cdef object validator
         for row in self.df.itertuples():
             for validator in self.row_validators:
                 validator.validate(row)
 
-    def validate_column_policy(self):
+    cpdef void validate_column_policy(self):
+        cdef str column_name
+        cdef list validators
+        cdef object element
+        cdef object validator
         for column_name, validators in self.column_validators.items():
             for element in self.df[column_name]:
                 for validator in validators:

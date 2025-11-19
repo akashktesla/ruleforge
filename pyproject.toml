@@ -18,3 +18,12 @@ dependencies = [
     "pandas"
 ]
 
+[tool.cython]
+annotate = false
+language_level = "3"
+boundscheck = false
+wraparound = false
+cdivision = true
+initializedcheck = false
+nonecheck = false
+

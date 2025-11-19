@@ -6,5 +6,5 @@ name="ruleforge",
 version="0.0.1",
 packages=["ruleforge"],
 install_requires = ["pandas"],
-ext_modules=cythonize(["ruleforge/validators.pyx","ruleforge/loader.pyx","ruleforge/builder.pyx"], language_level=3),
+ext_modules=cythonize(["ruleforge/validators.pyx","ruleforge/loader.pyx","ruleforge/builder.pyx","ruleforge/core.pyx"], language_level=3),
 )

@@ -4,11 +4,16 @@ pyproject.toml
 setup.py
 ruleforge/__init__.py
 ruleforge/builder.c
+ruleforge/builder.pxd
 ruleforge/builder.pyx
-ruleforge/core.py
+ruleforge/core.c
+ruleforge/core.pxd
+ruleforge/core.pyx
 ruleforge/loader.c
+ruleforge/loader.pxd
 ruleforge/loader.pyx
 ruleforge/validators.c
+ruleforge/validators.pxd
 ruleforge/validators.pyx
 ruleforge.egg-info/PKG-INFO
 ruleforge.egg-info/SOURCES.txt
